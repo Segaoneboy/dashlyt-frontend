@@ -1,120 +1,116 @@
 import React from 'react';
-import { LayoutDashboard, PieChart, Settings, Users, ArrowUpRight } from 'lucide-react';
+import Link from 'next/link';
+import { 
+    LayoutDashboard, 
+    Layers, 
+    ShieldCheck, 
+    Zap, 
+    ArrowRight, 
+    BarChart3, 
+    Clock 
+} from 'lucide-react';
+import FeatureCard from '@/components/FeatureCard'; 
+import Header from '@/components/Header'; 
 
-export default function Dashboard() {
+export default function Home() {
     return (
-        <div className="flex h-screen bg-[#F4F7F8] font-sans selection:bg-[#18a7b5]/20">
-            {/* Sidebar */}
-            <aside className="w-72 bg-white border-r border-slate-200 p-8 flex flex-col justify-between">
-                <div>
-                    <div className="flex items-center gap-3 mb-12">
-                        <div className="w-10 h-10 bg-[#18a7b5] rounded-xl flex items-center justify-center shadow-lg shadow-[#18a7b5]/30">
-                            <LayoutDashboard className="text-white w-6 h-6" />
-                        </div>
-                        <h1 className="text-2xl font-black text-[#18a7b5] tracking-tight">DashLyt</h1>
-                    </div>
+        <div className="min-h-screen bg-[#F4F7F8] font-sans selection:bg-[#18a7b5]/20 text-[#585858] relative overflow-hidden">
+            
+            {/* Фоновые декоративные эффекты (Blur) */}
+            <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-[#18a7b5]/5 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#148d99]/5 rounded-full blur-[100px] pointer-events-none" />
 
-                    <nav className="space-y-2">
-                        <NavItem icon={<LayoutDashboard size={20}/>} label="Обзор" active />
-                        <NavItem icon={<PieChart size={20}/>} label="Аналитика" />
-                        <NavItem icon={<Users size={20}/>} label="Команда" />
-                        <NavItem icon={<Settings size={20}/>} label="Настройки" />
-                    </nav>
+            {/* Шапка */}
+            <Header />
+
+            {/* Hero Section (Главный экран) */}
+            <section className="max-w-7xl mx-auto px-6 md:px-12 pt-16 pb-20 text-center relative z-10">
+                
+                
+                <h1 className="text-4xl font-black text-slate-800 tracking-tight max-w-4xl mx-auto leading-[1.1] mb-6">
+                    Управляйте <span className="text-[#18a7b5]">анализируйте</span> и решайте
+                </h1>
+                
+                <p className="text-base md:text-xl font-medium text-slate-500 max-w-2xl mx-auto leading-relaxed mb-10">
+                    DashLyt — это система дашбордов и аналитики. 
+                </p>
+
+                {/* Основное целевое действие */}
+                <div className="flex justify-center items-center">
+                    <Link 
+                        href="/auth" 
+                        className="w-full sm:w-auto bg-[#18a7b5] hover:bg-[#148d99] text-white px-8 py-4 rounded-2xl font-bold text-base transition-all shadow-lg shadow-[#18a7b5]/25 flex items-center justify-center gap-2 group active:scale-95"
+                    >
+                        Начать работу 
+                        <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                    </Link>
                 </div>
 
-                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                    <p className="text-xs text-slate-400 mb-2 uppercase font-bold tracking-widest">Статус системы</p>
-                    <div className="flex items-center gap-2 text-sm font-semibold text-[#18a7b5]">
-                        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                        Данные синхронизированы
-                    </div>
-                </div>
-            </aside>
-
-            {/* Main Content */}
-            <main className="flex-1 p-10 overflow-y-auto">
-                <header className="flex justify-between items-start mb-12">
-                    <div>
-                        <h2 className="text-4xl font-extrabold text-[#18a7b5] mb-2">Обзор ресурсов</h2>
-                        <p className="text-[#585858] max-w-md">
-                            Добро пожаловать в DashLyt. Здесь вы можете отслеживать ключевые показатели проекта и управлять загрузкой в реальном времени.
-                        </p>
-                    </div>
-                    <button className="bg-[#18a7b5] hover:bg-[#148d99] text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-[#18a7b5]/25 flex items-center gap-2 active:scale-95">
-                        <Settings size={18} />
-                        Настроить вид
-                    </button>
-                </header>
-
-                {/* Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                    <StatCard
-                        title="Активные элементы"
-                        value="128"
-                        desc="Задачи в текущем спринте"
-                        trend="+12% к прошлой неделе"
-                    />
-                    <StatCard
-                        title="Загрузка ресурсов"
-                        value="84%"
-                        desc="Средний показатель команды"
-                        trend="В пределах нормы"
-                    />
-                    <StatCard
-                        title="Ближайшие дедлайны"
-                        value="06"
-                        desc="Критические отметки (24ч)"
-                        trend="Требует внимания"
-                        isAlert
-                    />
-                </div>
-
-                {/* Описание функционала для отчета */}
-                <section className="bg-white p-8 rounded-3xl border border-slate-200">
-                    <h3 className="text-xl font-bold text-[#585858] mb-6 flex items-center gap-2">
-                        О системе DashLyt
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm text-slate-600 leading-relaxed">
-                        <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
-                            <p className="font-bold text-[#585858] mb-2 uppercase tracking-wide text-xs">Централизованный контроль</p>
-                            Система автоматически агрегирует данные из распределенных источников, преобразуя их в наглядные графики. Это позволяет исключить человеческий фактор при составлении отчетности.
+                {/* Превью дашбоарда */}
+                <div className="mt-16 bg-white p-4 rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-200/60 max-w-5xl mx-auto transform hover:scale-[1.01] transition-transform duration-500">
+                    <div className="bg-slate-50 rounded-2xl border border-slate-100 p-4 md:p-8 text-left grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="flex items-center gap-4 bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+                            <div className="p-3 bg-[#18a7b5]/10 rounded-xl text-[#18a7b5]"><Layers size={24}/></div>
+                            <div>
+                                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Проекты</p>
+                                <p className="text-xl font-extrabold text-slate-700">Все под контролем</p>
+                            </div>
                         </div>
-                        <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
-                            <p className="font-bold text-[#585858] mb-2 uppercase tracking-wide text-xs">Прогнозная аналитика</p>
-                            DashLyt не просто отображает сухие цифры, а анализирует тренды загрузки, помогая менеджеру увидеть потенциальное "бутылочное горлышко" еще до возникновения проблемы.
+                        <div className="flex items-center gap-4 bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+                            <div className="p-3 bg-green-50 rounded-xl text-green-500"><BarChart3 size={24}/></div>
+                            <div>
+                                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Аналитика</p>
+                                <p className="text-xl font-extrabold text-slate-700">100% точность данных</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-4 bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+                            <div className="p-3 bg-orange-50 rounded-xl text-orange-400"><Clock size={24}/></div>
+                            <div>
+                                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Дедлайны</p>
+                                <p className="text-xl font-extrabold text-slate-700">Умные уведомления</p>
+                            </div>
                         </div>
                     </div>
-                </section>
-            </main>
-        </div>
-    );
-}
+                </div>
+            </section>
 
-// Вспомогательные компоненты для чистоты кода
-function NavItem({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) {
-    return (
-        <div className={`flex items-center gap-4 px-4 py-3 rounded-xl cursor-pointer transition-all ${
-            active ? 'bg-[#18a7b5]/10 text-[#18a7b5]' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'
-        }`}>
-            {icon}
-            <span className="font-bold">{label}</span>
-        </div>
-    );
-}
+            {/* Особенности системы */}
+            <section className="max-w-7xl mx-auto px-6 md:px-12 pb-24 relative z-10">
+                <div className="text-center mb-16">
+                    <h2 className="text-2xl md:text-4xl font-extrabold text-slate-800 tracking-tight">
+                        Почему именно DashLyt?
+                    </h2>
+                    <p className="text-sm text-slate-400 mt-2">Инструменты, созданные инженерами для эффективного менеджмента</p>
+                </div>
 
-function StatCard({ title, value, desc, trend, isAlert = false }: any) {
-    return (
-        <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
-            <div className={`absolute top-0 left-0 w-2 h-full ${isAlert ? 'bg-orange-400' : 'bg-[#18a7b5]'}`}></div>
-            <div className="flex justify-between items-start mb-4">
-                <h4 className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">{title}</h4>
-                <ArrowUpRight className="text-slate-300 group-hover:text-[#18a7b5] transition-colors" size={20} />
-            </div>
-            <p className="text-5xl font-black text-[#585858] mb-2">{value}</p>
-            <p className="text-slate-600 font-medium mb-4">{desc}</p>
-            <div className={`text-[11px] font-bold px-3 py-1 rounded-full inline-block ${isAlert ? 'bg-orange-50 text-orange-600' : 'bg-[#18a7b5]/10 text-[#18a7b5]'}`}>
-                {trend}
-            </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <FeatureCard 
+                        icon={<LayoutDashboard className="text-[#18a7b5]" size={28} />}
+                        title="Канбан и Таски"
+                        description="Гибкое распределение задач между разработчиками. Отслеживайте статусы задач в реальном времени без лишних созвонов."
+                    />
+                    <FeatureCard 
+                        icon={<ShieldCheck className="text-green-500" size={28} />}
+                        title="Ролевой доступ"
+                        description="Четкое разделение прав: проект-менеджер видит всю картину, тимлид управляет своими проектами, а сотрудник фокусируется на задачах."
+                    />
+                    <FeatureCard 
+                        icon={<BarChart3 className="text-orange-400" size={28} />}
+                        title="Учет рабочего времени"
+                        description="Сравнивайте плановые трудозатраты с реально затраченным временем команды. Контролируйте маржинальность и забудьте о выгорании сотрудников."
+                    />
+                </div>
+            </section>
+
+            {/* Подвал */}
+            <footer className="border-t border-slate-200/60 bg-white py-8 relative z-10">
+                <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-center items-center text-xs text-slate-400 font-semibold uppercase tracking-wider">
+                    <div className="flex items-center gap-2">
+                        <LayoutDashboard size={16} className="text-[#18a7b5]" />
+                        <span>© 2026 DashLyt Ecosystem. Все права защищены.</span>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 }

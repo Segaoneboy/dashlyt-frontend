@@ -1,15 +1,26 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import { User, Mail, Lock, Briefcase, ArrowRight, Eye, EyeOff, ChevronDown, Check } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function RegisterForm() {
   const [isOpen, setIsOpen] = useState(false);
-  const [role, setRole] = useState('dev');
+  const [role, setRole] = useState('employee');
   const [showPassword, setShowPassword] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName:'',
+    lastName:'',
+    email:'',
+    password:'',
+    role:role
+  })
+  const router = useRouter();
+
   const roles = [
-    { id: 'dev', label: 'Разработчик (Dev)' },
+    { id: 'employee', label: 'Сотрудник' },
     { id: 'pm', label: 'Проект-менеджер (PM)' },
     { id: 'teamlead', label: 'Тимлид' }
   ];
@@ -24,10 +35,34 @@ export default function RegisterForm() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Регистрация:", { role });
+    setLoading(true);
+    try{
+      const response = await fetch('/api/auth/register',{
+        method:'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      if(!response.ok){
+        console.error('Ошибка при регистрации');
+        console.log(response.status);
+      }
+      console.log('Регистрация прошла успешно');
+      router.replace('/')
+    }
+    catch(error:any){
+      console.error(error)
+    }
+    finally{
+      setLoading(false);
+    }
   };
 
   return (
@@ -38,7 +73,21 @@ export default function RegisterForm() {
         <input 
           type="text" 
           placeholder="Ваше имя"
+          name="firstName"
           required
+          value={formData.firstName}
+          onChange={handleChange}
+          className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-[#18a7b5] focus:ring-4 focus:ring-[#18a7b5]/5 transition-all text-[#585858]"
+        />
+      </div><div className="relative group">
+        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#18a7b5] transition-colors" size={20} />
+        <input 
+          type="text" 
+          placeholder="Ваша фамилия"
+          name="lastName"
+          required
+          value={formData.lastName}
+          onChange={handleChange}
           className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-[#18a7b5] focus:ring-4 focus:ring-[#18a7b5]/5 transition-all text-[#585858]"
         />
       </div>
@@ -49,7 +98,10 @@ export default function RegisterForm() {
         <input 
           type="email" 
           placeholder="Email адрес"
+          name="email"
           required
+          value={formData.email}
+          onChange={handleChange}
           className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-[#18a7b5] focus:ring-4 focus:ring-[#18a7b5]/5 transition-all text-[#585858]"
         />
       </div>
@@ -58,38 +110,28 @@ export default function RegisterForm() {
       <div className="relative" ref={dropdownRef}>
         <div 
           onClick={() => setIsOpen(!isOpen)}
-          className={`
-            relative w-full bg-slate-50 border rounded-2xl py-4 pl-12 pr-10 cursor-pointer transition-all
-            ${isOpen ? 'border-[#18a7b5] ring-4 ring-[#18a7b5]/5' : 'border-slate-200'}
-            hover:border-[#18a7b5]
-          `}
+          className={`relative w-full bg-slate-50 border rounded-2xl py-4 pl-12 pr-10 cursor-pointer transition-all ${isOpen ? 'border-[#18a7b5] ring-4 ring-[#18a7b5]/5' : 'border-slate-200'} hover:border-[#18a7b5]`}
         >
           <Briefcase className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${isOpen ? 'text-[#18a7b5]' : 'text-slate-400'}`} size={20} />
-          
           <span className="text-[#585858] font-medium">
-            {roles.find(r => r.id === role)?.label}
+            {roles.find(r => r.id === formData.role)?.label}
           </span>
-
           <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 transition-transform duration-300 ${isOpen ? 'rotate-180 text-[#18a7b5]' : 'text-slate-400'}`} size={18} />
         </div>
 
-        {/* Выпадающий список */}
         {isOpen && (
-          <div className="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-2xl shadow-xl shadow-[#18a7b5]/10 overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-2xl shadow-xl shadow-[#18a7b5]/10 overflow-hidden">
             {roles.map((item) => (
               <div
                 key={item.id}
                 onClick={() => {
-                  setRole(item.id);
+                  setFormData({ ...formData, role: item.id });
                   setIsOpen(false);
                 }}
-                className={`
-                  flex items-center justify-between px-6 py-4 cursor-pointer transition-colors
-                  ${role === item.id ? 'bg-[#18a7b5]/10 text-[#18a7b5]' : 'text-[#585858] hover:bg-slate-50'}
-                `}
+                className={`flex items-center justify-between px-6 py-4 cursor-pointer transition-colors ${formData.role === item.id ? 'bg-[#18a7b5]/10 text-[#18a7b5]' : 'text-[#585858] hover:bg-slate-50'}`}
               >
                 <span className="font-medium">{item.label}</span>
-                {role === item.id && <Check size={18} className="text-[#18a7b5]" />}
+                {formData.role === item.id && <Check size={18} className="text-[#18a7b5]" />}
               </div>
             ))}
           </div>
@@ -102,7 +144,10 @@ export default function RegisterForm() {
         <input 
           type={showPassword ? "text" : "password"} 
           placeholder="Пароль"
+          name="password"
           required
+          value={formData.password}
+          onChange={handleChange}
           className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-12 pr-12 focus:outline-none focus:border-[#18a7b5] focus:ring-4 focus:ring-[#18a7b5]/5 transition-all text-[#585858]"
         />
         <button
@@ -116,10 +161,11 @@ export default function RegisterForm() {
 
       <button 
         type="submit"
-        className="w-full bg-[#18a7b5] hover:bg-[#148d99] text-white py-4 rounded-2xl font-bold transition-all shadow-lg shadow-[#18a7b5]/25 mt-6 flex items-center justify-center gap-2 group active:scale-95"
+        disabled={loading}
+        className="w-full bg-[#18a7b5] hover:bg-[#148d99] disabled:bg-slate-300 text-white py-4 rounded-2xl font-bold transition-all shadow-lg shadow-[#18a7b5]/25 mt-6 flex items-center justify-center gap-2 group active:scale-95"
       >
-        Создать аккаунт
-        <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+        {loading ? 'Создание...' : 'Создать аккаунт'}
+        {!loading && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
       </button>
     </form>
   );
