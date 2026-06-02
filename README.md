@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DashLyt - Сервис Дашбордов и аналитики
 
-## Getting Started
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+> **DashLyt** это современный и удобный инструмент для управления задачами и визуализации проектных данных. 
+
+## Команда проекта
+
+| Name | Role | Contact |
+|------|------|---------|
+| Сергей Пересыпкин | TeamLead & Backend разработчик | [Telegram](https://t.me/sega_oneboy) · [GitHub](https://github.com/Segaoneboy) |
+| Любовь Рыжова | Frontend разработчик |[GitHub](https://github.com/Loveerrr) |
+
+---
+
+## Проблемы и решения
+
+### 1. Жесткие шаблоны
+- **Проблема:** Пользователю приходится видеть десятки полей и графиков, которые ему не нужны, что замедляет работу.
+- **DashLyt:** Модульная система позволяет сфокусироваться на актуальных данных, предоставляя только те виджеты и метрики, которые необходимы для текущей задачи.
+
+### 2. Состояние загрузки ресурсов
+- **Проблема:** Существующие системы не показывают реальную картину использования мощностей проекта
+- **DashLyt:** Интерактивные графики в реальном времени сопоставляют сроки и загрузку, подсвечивая критические точки, переработки и дефицит ресурсов.
+
+### 3. Сложность фильтрации
+- **Проблема:** Поиск нужных данных в больших проектах занимает много времени. Менеджеры тратят ресурс на «просеивание» информации вместо принятия решений.
+- **DashLyt:** Высокопроизводительная система фильтрации позволяет мгновенно находить задачи по исполнителям, приоритетам или дедлайнам.
+
+
+---
+
+
+## Все функции
+
+- JWT Авторизация: Безопасный доступ с использованием Access и Refresh токенов.
+- Ролевая модель доступа: Разграничение прав между сотрудниками и менеджерами для защиты данных.
+- Интерактивные дашборды: Визуализация метрик проекта (графики выполнения задач, время выполнения).
+- Управление проектами и задачами: Полный цикл создания и редактирования сущностей с мгновенным обновлением через TanStack Query.
+- Динамическая фильтрация: Мгновенный поиск задач и проектов внутри Workspace.
+-
+-
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|----------|
+| Frontend | React · Next.js · TailwindCSS · Zustand · TanStack Query |
+|Backend | Express.js · Drizzle ORM |
+
+
+---
+
+## Architecture
+
+```
+┌──────────────┐      ┌────────────────────┐      ┌──────────────────┐
+│  Dashboard   │      │    WorkSpace       │      │ ProjectAnalytic  │
+│ (Controller) │────▶ │ (Task Management)  │      │ (Visualization)  │
+└──────┬───────┘      └────────────┬───────┘      └─────────┬────────┘
+       │                           │                        │
+       └───────────────────────────┴────────────────────────┘
+                    (State: selectedProjectId)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Quick Start
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Клонируем репозиторий
+git clone https://github.com/Segaoneboy/dashlyt-frontend
+cd dashlyt-frontend
 
-## Learn More
+# Устанавливаем все зависимости
+npm install
 
-To learn more about Next.js, take a look at the following resources:
+# Запускаем приложение
+npm run dev
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Roadmap
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [x] Реализация аналитического модуля на Chart.js.
+- [x] Ролевая модель доступа к API и UI-компонентам.
+- [x] Синхронизация состояний через Lifting State Up и TanStack Query.
+- [] Интеграция с новыми системами управления задачами.
+- [] Внедрение расширенных отчетов по производительности (Burn-down charts).
+- [] Оптимизация работы с большими списками задач (Virtualization).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
