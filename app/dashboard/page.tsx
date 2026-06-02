@@ -1,59 +1,52 @@
-"use client";
-import React, { useEffect } from 'react';
-import { useAuthStore } from '@/store/useAuthStore';
-import { useUiStore } from '@/store/useUiStore';
-import { useRouter } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-import { apiFetch } from '@/utils/api';
+"use client"
 
-import UserProfileCard from '@/components/dashboard/UserProfileCard';
-import Workspace from '@/components/dashboard/Workspace';
-import { ResourceChart, PersonalChart } from '@/components/dashboard/charts/ResourceChart';
-import ProjectTeamBlock from '@/components/dashboard/ProjectTeamBlock'; 
+import { ProjectAnalytic } from "@/components/dashboard/ProjectAnalytic";
+import UserProfile from "@/components/dashboard/UserProfile";
+import { WorkSpace } from "@/components/dashboard/WorkSpace";
+import { apiFetch } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
-export default function Dashboard() {
-    const user = useAuthStore((state) => state.user);
-    const { activeProjectId } = useUiStore();
-    const router = useRouter();
 
-    useEffect(() => {
-        if (!user) router.replace('/auth');
-    }, [user, router]);
+export default function DashboardPage() {
+    // Состояние теперь здесь
+    const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
-    // Общий запрос тасок для верхней панели графиков
-    const { data: tasks = [] } = useQuery({
-        queryKey: ['tasks', activeProjectId],
-        queryFn: async () => {
-            const endpoint = user?.role === 'employee' 
-                ? `/api/tasks/project/${activeProjectId}/my` 
-                : `/api/tasks/project/${activeProjectId}`;
-            const response = await apiFetch(endpoint);
-            const data = await response.json();
-            return data.tasks || data || [];
-        },
-        enabled: !!user?.role && !!activeProjectId && activeProjectId !== 'undefined',
+    // Данные проектов
+    const { data: projects = [] } = useQuery({
+        queryKey: ['projects'],
+        queryFn: () => apiFetch('/api/projects/all'),
     });
 
-    if (!user) return null; 
+    // Данные задач (зависит от selectedProjectId в этом же файле)
+    const { data: tasks = [] } = useQuery({
+        queryKey: ['tasks', selectedProjectId],
+        queryFn: () => apiFetch(`/api/tasks/project/${selectedProjectId}`), 
+        enabled: !!selectedProjectId,
+    });
+
+    const selectedProject = projects.find((p: any) => p.id === selectedProjectId);
 
     return (
-        <div className="min-h-screen bg-[#F4F7F8] p-6 md:p-10">
-            <div className="max-w-6xl mx-auto space-y-6">
-                
-                {/* Карточка профиля */}
-                <UserProfileCard />
-                
-                {/* БЛОК АНАЛИТИКИ (Графики) */}
-                {user.role === 'employee' ? (
-                    <PersonalChart tasks={tasks} />
-                ) : (
-                    <ResourceChart tasks={tasks} />
-                )}
+        <main className="min-h-screen bg-zinc-50 p-6 md:p-10">
+            <div className="max-w-7xl mx-auto space-y-8">
+                <UserProfile />
 
-                {/* ЕДИНАЯ ОБЪЕДИНЕННАЯ РАБОЧАЯ ОБЛАСТЬ */}
-                <Workspace userRole={user.role} />
-                
+                {/* Аналитика теперь видит изменение selectedProjectId */}
+                <div className="bg-white p-6 rounded-[16px] border border-zinc-200 shadow-sm">
+                    {selectedProject ? (
+                        <ProjectAnalytic key={selectedProjectId} project={selectedProject} tasks={tasks} />
+                    ) : (
+                        <p>Выберите проект</p>
+                    )}
+                </div>
+
+                {/* Пробрасываем пропсы вниз */}
+                <WorkSpace 
+                    selectedProjectId={selectedProjectId} 
+                    onSelectProject={setSelectedProjectId} 
+                />
             </div>
-        </div>
+        </main>
     );
 }

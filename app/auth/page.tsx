@@ -1,8 +1,7 @@
 "use client";
 import React, { useState } from 'react';
-import { LayoutDashboard } from 'lucide-react';
 import LoginForm from '@/components/LoginForm';
-import RegisterForm from '@/components/RegisterForm';
+import RegForm from '@/components/RegFrom';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -14,9 +13,6 @@ export default function AuthPage() {
 
         <div className="p-10">
           <div className="flex items-center gap-3 mb-8 justify-center">
-            <div className="w-12 h-12 bg-[#18a7b5] rounded-2xl flex items-center justify-center shadow-lg shadow-[#18a7b5]/30">
-              <LayoutDashboard className="text-white w-7 h-7" />
-            </div>
             <h1 className="text-3xl font-black text-[#18a7b5] tracking-tight">DashLyt</h1>
           </div>
 
@@ -30,7 +26,7 @@ export default function AuthPage() {
           </div>
 
           {/* Рендерим нужную форму в зависимости от стейта */}
-          {isLogin ? <LoginForm /> : <RegisterForm />}
+          {isLogin ? <LoginForm /> : <RegForm />}
 
           <div className="mt-8 text-center">
             <button 

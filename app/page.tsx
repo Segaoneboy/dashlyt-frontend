@@ -9,19 +9,17 @@ import {
     BarChart3, 
     Clock 
 } from 'lucide-react';
-import FeatureCard from '@/components/FeatureCard'; 
-import Header from '@/components/Header'; 
+
 
 export default function Home() {
     return (
-        <div className="min-h-screen bg-[#F4F7F8] font-sans selection:bg-[#18a7b5]/20 text-[#585858] relative overflow-hidden">
+        <div className="min-h-screen  font-sans text-[#585858] relative overflow-hidden">
             
             {/* Фоновые декоративные эффекты (Blur) */}
             <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-[#18a7b5]/5 rounded-full blur-[120px] pointer-events-none" />
             <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#148d99]/5 rounded-full blur-[100px] pointer-events-none" />
 
             {/* Шапка */}
-            <Header />
 
             {/* Hero Section (Главный экран) */}
             <section className="max-w-7xl mx-auto px-6 md:px-12 pt-16 pb-20 text-center relative z-10">
@@ -83,34 +81,7 @@ export default function Home() {
                     <p className="text-sm text-slate-400 mt-2">Инструменты, созданные инженерами для эффективного менеджмента</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <FeatureCard 
-                        icon={<LayoutDashboard className="text-[#18a7b5]" size={28} />}
-                        title="Канбан и Таски"
-                        description="Гибкое распределение задач между разработчиками. Отслеживайте статусы задач в реальном времени без лишних созвонов."
-                    />
-                    <FeatureCard 
-                        icon={<ShieldCheck className="text-green-500" size={28} />}
-                        title="Ролевой доступ"
-                        description="Четкое разделение прав: проект-менеджер видит всю картину, тимлид управляет своими проектами, а сотрудник фокусируется на задачах."
-                    />
-                    <FeatureCard 
-                        icon={<BarChart3 className="text-orange-400" size={28} />}
-                        title="Учет рабочего времени"
-                        description="Сравнивайте плановые трудозатраты с реально затраченным временем команды. Контролируйте маржинальность и забудьте о выгорании сотрудников."
-                    />
-                </div>
-            </section>
-
-            {/* Подвал */}
-            <footer className="border-t border-slate-200/60 bg-white py-8 relative z-10">
-                <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-center items-center text-xs text-slate-400 font-semibold uppercase tracking-wider">
-                    <div className="flex items-center gap-2">
-                        <LayoutDashboard size={16} className="text-[#18a7b5]" />
-                        <span>© 2026 DashLyt Ecosystem. Все права защищены.</span>
-                    </div>
-                </div>
-            </footer>
+            </section>        
         </div>
     );
 }
