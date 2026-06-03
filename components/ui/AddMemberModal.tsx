@@ -1,61 +1,104 @@
 "use client"
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '@/lib/api';
-import { toast } from 'react-hot-toast';
+import { X } from 'lucide-react';
 
-export function AddMemberModal({ isOpen, onClose, projectId }: { isOpen: boolean, onClose: () => void, projectId: string | null }) {
+export function AddMemberModal({ isOpen, onClose, targetId, targetType }: any) {
+    const queryClient = useQueryClient();
     const [email, setEmail] = useState('');
-    const [loading, setLoading] = useState(false);
 
-    const handleAdd = async () => {
-        if (!email) return;
-        setLoading(true);
+    // Сбрасываем инпут при открытии/закрытии модалки
+    useEffect(() => {
+        if (!isOpen) setEmail('');
+    }, [isOpen]);
 
-        try {
-            console.log({email, projectId})
-            await apiFetch('/api/projects/assign', { 
+    const assignMutation = useMutation({
+        mutationFn: (userEmail: string) => {
+            const url = targetType === 'project' 
+                ? `/api/projects/assign` 
+                : `/api/tasks/assign`;
+            
+            // Динамически формируем тело запроса в зависимости от типа
+            const payload = targetType === 'task' 
+                ? { taskId: targetId, email: userEmail }
+                : { projectId: targetId, email: userEmail };
+
+            return apiFetch(url, {
                 method: 'POST',
-                body: JSON.stringify({ email, projectId })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
             });
-            toast.success('Сотрудник добавлен!');
+        },
+        onSuccess: () => {
+            // Обновляем нужный кеш (проектов или задач)
+            queryClient.invalidateQueries({ queryKey: [targetType === 'project' ? 'projects' : 'tasks'] });
             onClose();
-            setEmail('');
-        } catch (error) {
-            toast.error('Не удалось найти пользователя или он уже в проекте');
-        } finally {
-            setLoading(false);
+        },
+        onError: (err) => {
+            console.error("Ошибка при назначении:", err);
         }
-    };
+    });
 
     if (!isOpen) return null;
 
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!email.trim()) return alert("Введите email сотрудника");
+        assignMutation.mutate(email);
+    };
+
     return (
-        <div className="min-h-screen fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white p-8 rounded-[16px] w-96 shadow-xl">
-                <h2 className="text-lg font-bold mb-4 text-zinc-900">Добавить сотрудника</h2>
-                <input 
-                    type="email"
-                    placeholder="Введите email сотрудника"
-                    className="w-full p-2.5 border border-zinc-200 rounded-lg mb-4 focus:ring-2 focus:ring-[#18a7b5] outline-none"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <div className="flex gap-2">
-                    <button 
-                        onClick={onClose} 
-                        className="flex-1 p-2 border border-zinc-200 rounded-lg text-zinc-600 hover:bg-zinc-50"
-                    >
-                        Отмена
-                    </button>
-                    <button 
-                        onClick={handleAdd} 
-                        disabled={loading}
-                        className="flex-1 p-2 bg-[#18a7b5] text-white rounded-lg hover:bg-[#138d99] disabled:bg-zinc-300"
-                    >
-                        {loading ? 'Добавление...' : 'Добавить'}
-                    </button>
-                </div>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white p-6 rounded-2xl w-full max-w-sm shadow-xl relative">
+                <button 
+                    type="button"
+                    onClick={onClose} 
+                    className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-600"
+                >
+                    <X size={20} />
+                </button>
+
+                <h3 className="font-bold text-lg mb-2">
+                    {targetType === 'project' ? 'Добавить участника в проект' : 'Назначить исполнителя'}
+                </h3>
+                <p className="text-xs text-zinc-400 mb-4">
+                    Введите email сотрудника для привязки к {targetType === 'project' ? 'проекту' : 'задаче'}.
+                </p>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1">
+                            Email сотрудника
+                        </label>
+                        <input 
+                            type="email"
+                            required
+                            placeholder="example@company.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full p-2.5 border border-zinc-200 rounded-lg focus:ring-2 focus:ring-[#18a7b5] outline-none text-sm" 
+                        />
+                    </div>
+
+                    <div className="flex gap-2 mt-6">
+                        <button 
+                            type="button"
+                            onClick={onClose} 
+                            className="flex-1 p-2.5 border rounded-lg text-sm font-medium hover:bg-zinc-50"
+                        >
+                            Отмена
+                        </button>
+                        <button 
+                            type="submit" 
+                            disabled={assignMutation.isPending}
+                            className="flex-1 p-2.5 bg-[#18a7b5] text-white rounded-lg text-sm font-medium hover:bg-[#138d99] disabled:opacity-50"
+                        >
+                            {assignMutation.isPending ? 'Сохранение...' : 'Назначить'}
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     );

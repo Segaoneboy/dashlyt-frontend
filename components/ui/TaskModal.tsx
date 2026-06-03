@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DropdownComponent from './DropdownComponent';
 
-export function TaskModal({ isOpen, onClose, onSubmit, projectId }: any) {
+export function TaskModal({ isOpen, onClose, onSubmit, projectId, initialData }: any) {
     const [form, setForm] = useState({ 
         title: '', 
         status: 'todo', 
@@ -12,9 +12,22 @@ export function TaskModal({ isOpen, onClose, onSubmit, projectId }: any) {
         estimatedHours: 0 
     });
 
+    // Синхронизация состояния формы при открытии на редактирование или создание
+    useEffect(() => {
+        if (initialData) {
+            setForm({
+                title: initialData.title || '',
+                status: initialData.status || 'todo',
+                startDate: initialData.startDate ? initialData.startDate.split('T')[0] : '',
+                endDate: initialData.endDate ? initialData.endDate.split('T')[0] : '',
+                estimatedHours: initialData.estimatedHours || 0
+            });
+        } else {
+            setForm({ title: '', status: 'todo', startDate: '', endDate: '', estimatedHours: 0 });
+        }
+    }, [initialData, isOpen]);
+
     const statusOptions = ['К выполнению (To Do)', 'В работе (In Progress)', 'Готово (Done)'];
-    
-    // Маппинг для конвертации человекочитаемого текста в API-значение
     const statusMap: Record<string, string> = {
         'К выполнению (To Do)': 'todo',
         'В работе (In Progress)': 'in_progress',
@@ -23,7 +36,6 @@ export function TaskModal({ isOpen, onClose, onSubmit, projectId }: any) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Отправляем данные вверх, включая projectId
         onSubmit({ ...form, projectId });
     };
 
@@ -32,7 +44,9 @@ export function TaskModal({ isOpen, onClose, onSubmit, projectId }: any) {
     return (
         <div className="min-h-screen fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-white p-8 rounded-[16px] w-full max-w-md shadow-xl">
-                <h2 className="text-xl font-bold mb-6 text-zinc-900">Создать задачу</h2>
+                <h2 className="text-xl font-bold mb-6 text-zinc-900">
+                    {initialData ? 'Редактирование задачи' : 'Создать задачу'}
+                </h2>
                 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Название */}
@@ -42,6 +56,7 @@ export function TaskModal({ isOpen, onClose, onSubmit, projectId }: any) {
                         </label>
                         <input 
                             required 
+                            value={form.title}
                             className="w-full p-2.5 border border-zinc-200 rounded-lg focus:ring-2 focus:ring-[#18a7b5] outline-none" 
                             onChange={e => setForm(prev => ({...prev, title: e.target.value}))} 
                         />
@@ -70,6 +85,7 @@ export function TaskModal({ isOpen, onClose, onSubmit, projectId }: any) {
                             <input 
                                 type="date" 
                                 required 
+                                value={form.startDate}
                                 className="w-full p-2.5 border border-zinc-200 rounded-lg focus:ring-2 focus:ring-[#18a7b5] outline-none" 
                                 onChange={e => setForm(prev => ({...prev, startDate: e.target.value}))} 
                             />
@@ -78,6 +94,7 @@ export function TaskModal({ isOpen, onClose, onSubmit, projectId }: any) {
                             <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1">Дата окончания</label>
                             <input 
                                 type="date" 
+                                value={form.endDate}
                                 className="w-full p-2.5 border border-zinc-200 rounded-lg focus:ring-2 focus:ring-[#18a7b5] outline-none" 
                                 onChange={e => setForm(prev => ({...prev, endDate: e.target.value}))} 
                             />
@@ -90,6 +107,7 @@ export function TaskModal({ isOpen, onClose, onSubmit, projectId }: any) {
                         <input 
                             type="number" 
                             min="0" 
+                            value={form.estimatedHours}
                             className="w-full p-2.5 border border-zinc-200 rounded-lg focus:ring-2 focus:ring-[#18a7b5] outline-none" 
                             onChange={e => setForm(prev => ({...prev, estimatedHours: parseInt(e.target.value) || 0}))} 
                         />
@@ -107,7 +125,7 @@ export function TaskModal({ isOpen, onClose, onSubmit, projectId }: any) {
                             type="submit" 
                             className="flex-1 p-2.5 bg-[#18a7b5] text-white rounded-lg font-medium hover:bg-[#138d99]"
                         >
-                            Создать задачу
+                            {initialData ? 'Сохранить изменения' : 'Создать задачу'}
                         </button>
                     </div>
                 </form>

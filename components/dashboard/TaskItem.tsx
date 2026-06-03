@@ -1,5 +1,6 @@
-export function TaskItem({ task, onClick }: any) {
-    // Пастельные цвета для статусов
+import { Edit2, Trash2, UserPlus } from "lucide-react";
+
+export function TaskItem({ task, onStatusChange, onEdit, onDelete, onAddMember }: any) {
     const statusConfig: any = {
         todo: {
             bg: 'bg-blue-100',
@@ -8,13 +9,13 @@ export function TaskItem({ task, onClick }: any) {
             label: 'К выполнению'
         },
         in_progress: {
-            bg: 'bg-amber-50', // Мягкий янтарный
+            bg: 'bg-amber-50',
             text: 'text-amber-600',
             border: 'border-amber-200',
             label: 'В работе'
         },
         done: {
-            bg: 'bg-emerald-50', // Мягкий изумрудный
+            bg: 'bg-emerald-50',
             text: 'text-emerald-600',
             border: 'border-emerald-200',
             label: 'Готово'
@@ -25,17 +26,46 @@ export function TaskItem({ task, onClick }: any) {
 
     return (
         <div 
-            onClick={onClick}
-            className="group p-4 bg-white rounded-xl border border-zinc-200 shadow-sm hover:border-[#18a7b5] hover:shadow-md transition-all cursor-pointer"
+            className="group p-4 bg-white rounded-xl border border-zinc-200 shadow-sm hover:border-[#18a7b5] hover:shadow-md transition-all"
         >
             <div className="flex justify-between items-start mb-3">
-                <span className="text-sm font-semibold text-zinc-900 group-hover:text-[#18a7b5] transition-colors">
-                    {task.title}
-                </span>
-                {/* Бейдж статуса */}
-                <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded-md border ${config.bg} ${config.text} ${config.border}`}>
-                    {config.label}
-                </span>
+                <div className="flex gap-2 items-center">
+                    <span className="text-sm font-semibold text-zinc-900">
+                        {task.title}
+                    </span>
+                    {/* Бейдж статуса */}
+                    <button 
+                        onClick={() => onStatusChange(task)}
+                        className={`text-[10px] font-bold uppercase px-2 py-1 rounded-md border cursor-pointer ${config.bg} ${config.text} ${config.border} hover:opacity-80 transition-opacity`}
+                    >
+                        {config.label}
+                    </button>
+                </div>
+                
+                {/* Панель управления кнопками */}
+                <div className="flex gap-1 ml-4">
+                    <button 
+                        onClick={() => onAddMember(task)}
+                        className="p-1.5 text-zinc-400 hover:text-[#18a7b5] transition-colors rounded-md hover:bg-zinc-50"
+                        title="Добавить сотрудника"
+                    >
+                        <UserPlus size={16} />
+                    </button>
+                    <button 
+                        onClick={() => onEdit(task)}
+                        className="p-1.5 text-zinc-400 hover:text-amber-500 transition-colors rounded-md hover:bg-zinc-50"
+                        title="Редактировать"
+                    >
+                        <Edit2 size={16} />
+                    </button>
+                    <button 
+                        onClick={() => onDelete(task.id)}
+                        className="p-1.5 text-zinc-400 hover:text-red-500 transition-colors rounded-md hover:bg-zinc-50"
+                        title="Удалить"
+                    >
+                        <Trash2 size={16} />
+                    </button>
+                </div>
             </div>
 
             <div className="flex items-center justify-between text-[11px] text-zinc-500">
