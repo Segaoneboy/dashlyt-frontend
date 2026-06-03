@@ -6,11 +6,14 @@ import { WorkSpace } from "@/components/dashboard/WorkSpace";
 import { apiFetch } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import {useAuthStore} from "@/store/AuthStore";
 
 
 export default function DashboardPage() {
     const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
+    const user = useAuthStore((state)=> state.user)
+    const showAnalytic = user?.role !== "employee"
     const { data: projects = [] } = useQuery({
         queryKey: ['projects'],
         queryFn: () => apiFetch('/api/projects/all'),
@@ -31,13 +34,15 @@ export default function DashboardPage() {
                 <UserProfile />
 
                 {/* Аналитика теперь видит изменение selectedProjectId */}
-                <div className="bg-white p-6 rounded-[16px] border border-zinc-200 shadow-sm">
-                    {selectedProject ? (
-                        <ProjectAnalytic key={selectedProjectId} project={selectedProject} tasks={tasks} />
-                    ) : (
-                        <p>Выберите проект</p>
-                    )}
-                </div>
+                {showAnalytic && (
+                    <div className="bg-white p-6 rounded-[16px] border border-zinc-200 shadow-sm">
+                        {selectedProject ? (
+                            <ProjectAnalytic key={selectedProjectId} project={selectedProject} tasks={tasks} />
+                        ) : (
+                            <p className="text-zinc-400 text-sm">Выберите проект для просмотра аналитики</p>
+                        )}
+                    </div>
+                )}
 
                 {/* Пробрасываем пропсы вниз */}
                 <WorkSpace 

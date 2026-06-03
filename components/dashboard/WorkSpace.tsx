@@ -90,10 +90,8 @@ export function WorkSpace({ selectedProjectId, onSelectProject }: {
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks', selectedProjectId] })
     });
 
-    // Изменение (обновление) полей задачи
     const updateTaskMutation = useMutation({
         mutationFn: (data: any) => {
-            // Подкладываем ID редактируемой задачи в body
             const bodyData = { ...data, id: taskToUpdate.id };
             return apiFetch(`/api/tasks/update`, {
                 method: 'PUT',
@@ -151,20 +149,19 @@ export function WorkSpace({ selectedProjectId, onSelectProject }: {
                 onSubmit={(data: any) => updateTaskStatusMutation.mutate(data)}
             />
 
-            {/* Назначение сотрудников на задачу (используем существующую модалку) */}
             <AddMemberModal 
                 isOpen={isMemberModalOpen}
-                targetId={memberTargetId} // Переименуем проп для универсальности
-                targetType={memberTargetType} // Передаем тип ('project' или 'task')
+                targetId={memberTargetId} 
+                targetType={memberTargetType} 
                 onClose={() => { 
                     setIsMemberModalOpen(false); 
                     setMemberTargetId(null); 
-                    setMemberTargetType(null); // Очищаем тип
+                    setMemberTargetType(null); 
                 }}
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Левая колонка — Проекты */}
+                {/* Проекты */}
                 <div className="bg-white p-6 rounded-[16px] border border-zinc-200 shadow-sm space-y-2">
                     <h3 className="font-bold text-zinc-900 mb-4">Мои проекты</h3>
                     {Array.isArray(projects) && projects.length === 0 ? (
@@ -175,6 +172,7 @@ export function WorkSpace({ selectedProjectId, onSelectProject }: {
                                 <ProjectItem 
                                     key={p.id} 
                                     project={p} 
+                                    canManage = {isNoteEmployee}
                                     isSelected={selectedProjectId === p.id}
                                     onClick={() => onSelectProject(p.id)}
                                     onEdit={(proj: any) => { setEditingProject(proj); setIsProjectModalOpen(true); }}
@@ -205,6 +203,7 @@ export function WorkSpace({ selectedProjectId, onSelectProject }: {
                                 <TaskItem 
                                     key={t.id} 
                                     task={t}
+                                    canManage={isNoteEmployee}
                                     onStatusChange={(task: any) => { 
                                         setTaskToUpdate(task); 
                                         setIsStatusModalOpen(true); 
@@ -220,7 +219,7 @@ export function WorkSpace({ selectedProjectId, onSelectProject }: {
                                     }}
                                     onAddMember={(task: any) => {
                                         setMemberTargetId(task.id); 
-                                        setMemberTargetType('task'); // Указываем тип
+                                        setMemberTargetType('task');
                                         setIsMemberModalOpen(true);
                                     }}
                                  />

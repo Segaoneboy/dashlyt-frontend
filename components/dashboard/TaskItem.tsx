@@ -1,6 +1,6 @@
 import { Edit2, Trash2, UserPlus } from "lucide-react";
 
-export function TaskItem({ task, onStatusChange, onEdit, onDelete, onAddMember }: any) {
+export function TaskItem({ task, onStatusChange, onEdit, onDelete, onAddMember, canManage }: any) {
     const statusConfig: any = {
         todo: {
             bg: 'bg-blue-100',
@@ -43,29 +43,32 @@ export function TaskItem({ task, onStatusChange, onEdit, onDelete, onAddMember }
                 </div>
                 
                 {/* Панель управления кнопками */}
-                <div className="flex gap-1 ml-4">
-                    <button 
-                        onClick={() => onAddMember(task)}
-                        className="p-1.5 text-zinc-400 hover:text-[#18a7b5] transition-colors rounded-md hover:bg-zinc-50"
-                        title="Добавить сотрудника"
-                    >
-                        <UserPlus size={16} />
-                    </button>
-                    <button 
-                        onClick={() => onEdit(task)}
-                        className="p-1.5 text-zinc-400 hover:text-amber-500 transition-colors rounded-md hover:bg-zinc-50"
-                        title="Редактировать"
-                    >
-                        <Edit2 size={16} />
-                    </button>
-                    <button 
-                        onClick={() => onDelete(task.id)}
-                        className="p-1.5 text-zinc-400 hover:text-red-500 transition-colors rounded-md hover:bg-zinc-50"
-                        title="Удалить"
-                    >
-                        <Trash2 size={16} />
-                    </button>
-                </div>
+                {canManage && (
+                    <div className="flex gap-1 ml-4">
+                        <button 
+                            onClick={() => onAddMember(task)}
+                            className="p-1.5 text-zinc-400 hover:text-[#18a7b5] transition-colors rounded-md hover:bg-zinc-50"
+                            title="Добавить сотрудника"
+                        >
+                            <UserPlus size={16} />
+                        </button>
+                        <button 
+                            onClick={() => onEdit(task)}
+                            className="p-1.5 text-zinc-400 hover:text-amber-500 transition-colors rounded-md hover:bg-zinc-50"
+                            title="Редактировать"
+                        >
+                            <Edit2 size={16} />
+                        </button>
+                        <button 
+                            onClick={() => onDelete(task.id)}
+                            className="p-1.5 text-zinc-400 hover:text-red-500 transition-colors rounded-md hover:bg-zinc-50"
+                            title="Удалить"
+                        >
+                            <Trash2 size={16} />
+                        </button>
+                    </div>
+                )}
+                
             </div>
 
             <div className="flex items-center justify-between text-[11px] text-zinc-500">
