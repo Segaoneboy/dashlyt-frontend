@@ -10,7 +10,15 @@ export function ProjectModal({ isOpen, onClose, onSubmit, initialData }: any) {
 
     // Если initialData меняется (например, открыли другой проект), обновляем форму
     useEffect(() => {
-        if (initialData) setForm(initialData);
+        if (initialData) {
+            setForm({
+                name: initialData.name || '',
+                description: initialData.description || '',
+                status: initialData.status || 'active',
+                startDate: initialData.startDate ? initialData.startDate.split('T')[0] : '',
+                endDate: initialData.endDate ? initialData.endDate.split('T')[0] : ''
+            });
+        }
         else setForm({ name: '', description: '', status: 'active', startDate: '', endDate: '' });
     }, [initialData, isOpen]);
 

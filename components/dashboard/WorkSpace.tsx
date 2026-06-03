@@ -36,16 +36,29 @@ export function WorkSpace({ selectedProjectId, onSelectProject }: {
         enabled: !!tasksEndpoint,
     });
 
-    // Мутации
     const saveProjectMutation = useMutation({
-        mutationFn: (data: any) => apiFetch(editingProject ? `/api/projects/update/` : '/api/projects/create', {
-            method: editingProject ? 'PUT' : 'POST',
-            body: JSON.stringify(data)
-        }),
+        mutationFn: (data: any) => {
+            const isEditing = !!editingProject;
+            
+            const bodyData = isEditing 
+                ? { ...data, id: editingProject.id } 
+                : data;
+
+            return apiFetch(isEditing ? '/api/projects/update' : '/api/projects/create', {
+                method: isEditing ? 'PUT' : 'POST',
+                headers: { 
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify(bodyData)
+            });
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['projects'] });
             setIsProjectModalOpen(false);
             setEditingProject(null);
+        },
+        onError: (error) => {
+            console.error("Ошибка при сохранении проекта:", error);
         }
     });
 
