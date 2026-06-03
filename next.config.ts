@@ -5,8 +5,8 @@ const nextConfig: NextConfig = {
         return [
             {
                 source: "/api/:path*",
-                // destination: "http://localhost:5000/api/:path*",
-                destination: "https://dashlyt-backend.vercel.app/api/:path*",
+                destination: "http://localhost:5000/api/:path*",
+                // destination: "https://dashlyt-backend.vercel.app/api/:path*",
             }
         ]
     },

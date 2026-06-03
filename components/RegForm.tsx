@@ -2,7 +2,10 @@
 
 import DropdownComponent from '@/components/ui/DropdownComponent';
 import { useState } from 'react';
+import { useAuthStore } from "@/store/AuthStore";
 import {useRouter} from 'next/navigation'
+import { apiFetch } from '@/lib/api';
+import { toast } from 'react-hot-toast';
 
 export default function RegForm() {
     const router= useRouter()
@@ -22,25 +25,22 @@ export default function RegForm() {
 
     const handleSubmit = async(e: React.FormEvent)=>{
         e.preventDefault();
-        
+        setLoading(true)
+        const regPromise = apiFetch('/api/auth/register',{
+                        method:'POST',
+                        body: JSON.stringify(formData)
+                    });
         try{
-            setLoading(true);
-            const response = await fetch('/api/auth/register',{
-                method:'POST',
-                headers:{
-                    'Content-Type':'application/json'
-                },
-                body: JSON.stringify(formData)
+            await toast.promise(regPromise,{
+                loading: 'Регистрируем аккаунт...',
+                success: 'Регистрация прошла успешно!',
+                error: 'Ошибка регистрации. Попробуйте позже'
             });
-            if(response.ok){
-                setLoading(false);
-                router.push('/');
-            }else{
-                setLoading(false);
-                console.log('Ошибка регистрации:');
-            }
+            router.push("/")
         } catch (error) {
             console.error('Ошибка регистрации:', error);
+        }finally{
+            setLoading(false)
         }
     }
 
@@ -62,7 +62,7 @@ export default function RegForm() {
             <div className="mb-4 flex flex-col text-left w-full">
                 <label className="text-sm text-zinc-600 font-medium mb-1">Имя</label>
                 <input
-                type="firstname"
+                type="text"
                 value={formData.firstName}
                 onChange={(e)=> setFormData({...formData, firstName: e.target.value})}
                 className="w-full  border-2 border-[#18a7b5] rounded-[5px] px-3 py-2 text-[16px] text-zinc-800 focus:outline-none"
@@ -73,7 +73,7 @@ export default function RegForm() {
             <div className="mb-4 flex flex-col text-left w-full">
                 <label className="text-sm text-zinc-600 font-medium mb-1">Фамилия</label>
                 <input
-                type="lastname"
+                type="text"
                 value={formData.lastName}
                 onChange={(e)=> setFormData({...formData, lastName: e.target.value})}
                 className="w-full  border-2 border-[#18a7b5] rounded-[5px] px-3 py-2 text-[16px] text-zinc-800 focus:outline-none"
@@ -106,13 +106,12 @@ export default function RegForm() {
             {/* Кнопка отправки */}
             <button
                 type="submit"
-                className="w-full bg-[#18a7b5] hover:bg- text-white font-normal py-3 rounded-[5px] text-[16px] transition-colors cursor-pointer text-center"
+                className="w-full bg-[#18a7b5] hover:bg- text-white font-normal py-3 rounded-[5px] text-[16px] transition-colors cursor-pointer text-center disabled:bg-zinc-400 disabled:cursor-not-allowed disabled:opacity-70"
                 disabled={loading}
             >
-            {loading ? 'Загрузка...' : 'Зарегистрироваться'}
+                Зарегистрировать
             </button>
-
-            
+               
         </form>
     )
 }

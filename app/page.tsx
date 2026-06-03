@@ -1,4 +1,4 @@
-import React from 'react';
+"use client"
 import Link from 'next/link';
 import { 
     LayoutDashboard, 
@@ -9,9 +9,13 @@ import {
     BarChart3, 
     Clock 
 } from 'lucide-react';
+import { useAuthStore } from '@/store/AuthStore';
 
 
 export default function Home() {
+
+    const {isAuthenticated} = useAuthStore();
+
     return (
         <div className="min-h-screen  font-sans text-[#585858] relative overflow-hidden">
             
@@ -35,13 +39,23 @@ export default function Home() {
 
                 {/* Основное целевое действие */}
                 <div className="flex justify-center items-center">
-                    <Link 
+                    {isAuthenticated ? (
+                        <Link 
+                        href="/dashboard" 
+                        className="w-full sm:w-auto bg-[#18a7b5] hover:bg-[#148d99] text-white px-8 py-4 rounded-2xl font-bold text-base transition-all shadow-lg shadow-[#18a7b5]/25 flex items-center justify-center gap-2 group active:scale-95"
+                    >
+                        Начать работу 
+                        <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                    ): (
+                        <Link 
                         href="/auth" 
                         className="w-full sm:w-auto bg-[#18a7b5] hover:bg-[#148d99] text-white px-8 py-4 rounded-2xl font-bold text-base transition-all shadow-lg shadow-[#18a7b5]/25 flex items-center justify-center gap-2 group active:scale-95"
                     >
                         Начать работу 
                         <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                     </Link>
+                    )}
                 </div>
 
                 {/* Превью дашбоарда */}

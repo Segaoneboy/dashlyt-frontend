@@ -22,10 +22,10 @@ export default function DropdownComponent({ options, onSelect }: { options: stri
             <div 
                 onClick={() => setIsOpen(!isOpen)}
                 className={`w-full border-2 rounded-[5px] px-3 py-2 text-[16px] text-zinc-800 cursor-pointer flex justify-between items-center transition-colors
-                ${isOpen ? 'border-[#18a7b5] outline-none' : 'border-[#18a7b5] hover:border-[#138d99]'}`}
+                ${isOpen ? 'border-[#18a7b5] outline-none' : 'border-zinc-200 hover:border-[#138d99]'}`}
             >
                 <span className={query ? "text-zinc-800" : "text-zinc-400"}>
-                    {query || "Выберите роль"}
+                    {query || "Выберите"}
                 </span>
                 {/* Иконка стрелочки для визуального понимания, что это селект */}
                 <ChevronDown 

@@ -1,13 +1,13 @@
 import {create} from 'zustand';
-import {UserType} from '@/types/UserType';
-import { apiFetch } from '@/lib/api';
+import { apiFetch, setOnLogout } from '@/lib/api';
+import { AuthState, User } from '@/types/auth';
 
-export const useAuthStore = create((set)=>({
+export const useAuthStore = create<AuthState>((set)=>({
     user:  null,
     isAuthenticated: false,
     isLoading: false,
 
-    setUser: (user) => set({user, isAuthenticated: !!user}),
+    setUser: (user: User | null) => set({user, isAuthenticated: !!user}),
 
     checkAuth: async ()=>{
         set({isLoading: true});
@@ -15,13 +15,26 @@ export const useAuthStore = create((set)=>({
             const data = await apiFetch('/api/auth/me');
             set({user: data.user, isAuthenticated: true})
         } catch{
-            set({user: null, isAuthenthicated: false});
+            set({user: null, isAuthenticated: false});
         } finally{
             set({isLoading: false});
         }
     },
 
-    logout: () => set({user:null, isAuthenticated: false}),
-    setLoading: (isLoading) => set({isLoading}),
+    logout: async () => {
+        try{
+            await apiFetch('/api/auth/logout', {method: 'POST'})
+        }catch(error){
+            console.error('Ошибка выхода', error)
+        }finally{
+            set({user: null, isAuthenticated: false})
+        }
+    },
+
+    setLoading: (isLoading: boolean) => set({isLoading}),
 
 }))
+
+setOnLogout(()=>{
+    useAuthStore.getState().logout();
+})

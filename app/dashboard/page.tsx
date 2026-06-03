@@ -9,10 +9,8 @@ import { useState } from "react";
 
 
 export default function DashboardPage() {
-    // Состояние теперь здесь
     const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
-    // Данные проектов
     const { data: projects = [] } = useQuery({
         queryKey: ['projects'],
         queryFn: () => apiFetch('/api/projects/all'),

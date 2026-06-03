@@ -4,7 +4,7 @@ export function TaskItem({ task, onClick }: any) {
         todo: {
             bg: 'bg-blue-100',
             text: 'text-zinc-600',
-            border: 'border-zinc-200',
+            border: 'border-blue-200',
             label: 'К выполнению'
         },
         in_progress: {

@@ -1,8 +1,13 @@
 "use client"
 
 import { LayoutDashboard } from "lucide-react"
+import {usePathname} from 'next/navigation'
 
 export default function Footer() {
+    const pathname = usePathname();
+    if(pathname === '/auth'){
+        return(null)
+    }
     return(
     <footer className="border-t border-slate-200/60 bg-white py-8 relative z-10">
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-center items-center text-xs text-slate-400 font-semibold uppercase tracking-wider">

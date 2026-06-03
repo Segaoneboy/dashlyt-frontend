@@ -1,13 +1,18 @@
 "use client"
 
 import { useAuthStore } from '@/store/AuthStore';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '@/lib/api';
 import { LogOut, Loader2, User, LayoutDashboard } from 'lucide-react';
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { Skeleton } from '@/components/ui/Skeleton';
+import {usePathname, useRouter} from 'next/navigation'
 
 export default function Header() {
+    const queryClient = useQueryClient();
+    const pathname = usePathname();
+    const router = useRouter();
     const { user, isAuthenticated, setUser, logout } = useAuthStore();
 
     const { data, isLoading } = useQuery({
@@ -20,6 +25,14 @@ export default function Header() {
         if (data && data.user) setUser(data.user);
     }, [data, setUser]);
 
+    if(pathname === '/auth'){
+        return(null)
+    }
+    const handleLogout = async () =>{
+        await logout();
+        router.replace('/');
+        queryClient.clear();
+    }
     return (
         <header className=" top-0 z-50 w-full ">
             <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -34,7 +47,7 @@ export default function Header() {
                 {/* Навигация / Действия */}
                 <div className="flex items-center gap-6">
                     {isLoading ? (
-                        <Loader2 className="animate-spin text-[#18a7b5]" />
+                        <Skeleton className="h-8 w-8 rounded-full"/>
                     ) : isAuthenticated && user ? (
                         <div className="flex items-center gap-4 bg-zinc-50 py-2 px-4 rounded-full border border-zinc-100">
                             <Link href="/dashboard">
@@ -47,7 +60,7 @@ export default function Header() {
                             </Link>
                             <div className="h-4 w-px bg-zinc-300" />
                             <button 
-                                onClick={() => logout()} 
+                                onClick={handleLogout} 
                                 className="text-zinc-400 hover:text-red-500 transition-colors"
                                 title="Выйти"
                             >

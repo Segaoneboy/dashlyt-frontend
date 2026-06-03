@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import {useRouter} from 'next/navigation'
-
-
+import { useAuthStore } from "@/store/AuthStore";
+import { apiFetch } from "@/lib/api";
+import { toast } from 'react-hot-toast';
 
 export default function LoginForm() {
-
+    const [loading, setLoading] = useState(false)
+    const {setUser} = useAuthStore();
     const router= useRouter()
-    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
         password:'',
@@ -16,25 +17,26 @@ export default function LoginForm() {
 
     const handleSubmit = async(e: React.FormEvent)=>{
         e.preventDefault();
-        
-        try{
-            setLoading(true);
-            const response = await fetch('/api/auth/login',{
+        setLoading(true)
+        const loginPromise = apiFetch('/api/auth/login',{
                 method:'POST',
-                headers:{
-                    'Content-Type':'application/json'
-                },
                 body: JSON.stringify(formData)
             });
-            if(response.ok){
-                setLoading(false);
-                router.push('/');
-            }else{
-                setLoading(false);
-                console.log('Ошибка регистрации:');
-            }
+        try{
+            const data = await toast.promise(loginPromise,{
+                loading: 'Входим в аккаунт...',
+                success: (data) =>{
+                    setUser(data.user);
+                    return 'Добро пожаловать';
+
+                },
+                error: 'Ошибка входа. Попробуйте позже'
+            })
+            router.push("/dashboard")
         } catch (error) {
-            console.error('Ошибка регистрации:', error);
+            console.error('Ошибка авторизации:', error);
+        }finally{
+            setLoading(false)
         }
     }
 
@@ -68,12 +70,11 @@ export default function LoginForm() {
             {/* Кнопка отправки */}
             <button
                 type="submit"
-                className="w-full bg-[#18a7b5] hover:bg- text-white font-normal py-3 rounded-[5px] text-[16px] transition-colors cursor-pointer text-center"
+                className="w-full bg-[#18a7b5] hover:bg- text-white font-normal py-3 rounded-[5px] text-[16px] transition-colors cursor-pointer text-center disabled:bg-zinc-400 disabled:cursor-not-allowed disabled:opacity-70"
                 disabled={loading}
             >
-            {loading ? 'Загрузка...' : 'Войти'}
+                Войти
             </button>
-
             
         </form>
     )

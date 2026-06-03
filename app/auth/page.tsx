@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import LoginForm from '@/components/LoginForm';
-import RegForm from '@/components/RegFrom';
+import RegForm from '@/components/RegForm';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
