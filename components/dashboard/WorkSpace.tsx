@@ -30,6 +30,7 @@ export function WorkSpace({ selectedProjectId, onSelectProject }: {
     const [memberTargetType, setMemberTargetType] = useState<'project' | 'task' | null>(null);
     
     const queryClient = useQueryClient();
+    
 
     // Запросы
     const { data: projects } = useQuery({ queryKey: ['projects'], queryFn: () => apiFetch('/api/projects/all') });
