@@ -8,7 +8,7 @@ import { Users, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export function ProjectAnalytic({ tasks = [], project }: { tasks: any[], project: any }) {
     
-    // 1. Делаем запрос к бэкенду для получения количества участников проекта
+    // делаем запрос к бэкенду для получения количества участников проекта
     const { data: usersData } = useQuery({
         queryKey: ['project-users', project.id],
         queryFn: () => apiFetch(`/api/projects/users/${project.id}`),
@@ -18,16 +18,16 @@ export function ProjectAnalytic({ tasks = [], project }: { tasks: any[], project
 
     const teamCount = usersData?.count || 0;
 
-    // 2. Расчет метрик времени (План / Факт)
+    // расчет метрик времени (План / Факт)
     const estimatedTotal = tasks.reduce((acc, t) => acc + (t.estimatedHours || 0), 0);
     const actualTotal = tasks.reduce((acc, t) => acc + (t.actualHours || 0), 0);
 
-    // Процент выполнения временного плана (сколько заложено vs сколько потрачено)
+    // процент выполнения временного плана (сколько заложено сколько потрачено)
     const timeBurnPercentage = estimatedTotal > 0 
-        ? Math.min(Math.round((actualTotal / estimatedTotal) * 180), 100) // Ограничим 100% для визуализации шкалы
+        ? Math.min(Math.round((actualTotal / estimatedTotal) * 180), 100)
         : 0;
 
-    // 3. Расчет статусов задач для круговой диаграммы
+    // расчет статусов задач для круговой диаграммы
     const statusCounts = tasks.reduce((acc, t) => {
         acc[t.status] = (acc[t.status] || 0) + 1;
         return acc;
@@ -38,33 +38,33 @@ export function ProjectAnalytic({ tasks = [], project }: { tasks: any[], project
         ? Math.round((statusCounts.done / totalTasks) * 100) 
         : 0;
 
-    // 4. Данные для красивого BarChart (Время)
+    // данные для столбчатой диаграммы
     const barData = {
         labels: ['Потрачено часов'],
         datasets: [
             {
                 label: 'План',
                 data: [estimatedTotal],
-                backgroundColor: '#e4e4e7', // Мягкий zinc-200
+                backgroundColor: '#f4f4f5', 
                 borderRadius: 8,
                 borderSkipped: false,
             },
             {
                 label: 'Факт',
                 data: [actualTotal],
-                backgroundColor: actualTotal > estimatedTotal ? '#ef4444' : '#18a7b5', // Красный, если перелимит
+                backgroundColor: actualTotal > estimatedTotal ? '#f87171' : '#0d9488', 
                 borderRadius: 8,
                 borderSkipped: false,
             }
         ]
     };
 
-    // 5. Данные для PieChart (Статусы)
+    // данные для круговой диаграммы 
     const pieData = {
         labels: ['К выполнению', 'В работе', 'Готово'],
         datasets: [{
             data: [statusCounts.todo, statusCounts.in_progress, statusCounts.done],
-            backgroundColor: ['#77a6df', '#fbbf24', '#10b981'], // Slate-300, Amber-400, Emerald-500
+            backgroundColor: ['#cbd5e1', '#fde047', '#2dd4bf'], 
             borderWidth: 2,
             borderColor: '#ffffff',
         }]
