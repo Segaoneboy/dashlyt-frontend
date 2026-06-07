@@ -103,13 +103,28 @@ export function TaskModal({ isOpen, onClose, onSubmit, projectId, initialData }:
 
                     {/* Оценка времени */}
                     <div>
-                        <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1">Оценка (часов)</label>
+                        <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1">
+                            Оценка (часов)
+                        </label>
                         <input 
                             type="number" 
                             min="0" 
-                            value={form.estimatedHours}
+                            value={form.estimatedHours === 0 ? '' : form.estimatedHours} 
+                            placeholder="0" 
                             className="w-full p-2.5 border border-zinc-200 rounded-lg focus:ring-2 focus:ring-[#18a7b5] outline-none" 
-                            onChange={e => setForm(prev => ({...prev, estimatedHours: parseInt(e.target.value) || 0}))} 
+                            onChange={e => {
+                                const val = e.target.value;
+                                setForm(prev => ({
+                                    ...prev, 
+                                    estimatedHours: val === '' ? 0 : parseInt(val, 10) || 0
+                                }));
+                            }} 
+                            onBlur={e => {
+                                // если пользователь кликнул мимо и ничего не ввел, возвращаем в стейт 0
+                                if (e.target.value === '') {
+                                    setForm(prev => ({ ...prev, estimatedHours: 0 }));
+                                }
+                            }}
                         />
                     </div>
 
