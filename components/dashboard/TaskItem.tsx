@@ -2,10 +2,10 @@ import { Edit2, Trash2, UserPlus } from "lucide-react";
 
 export function TaskItem({ task, onStatusChange, onEdit, onDelete, onAddMember, canManage }: any) {
     const statusConfig: any = {
-        todo: {
-            bg: 'bg-blue-100',
-            text: 'text-zinc-600',
-            border: 'border-blue-200',
+       todo: {
+            bg: 'bg-[#adc0d9]/20', 
+            text: 'text-[#5f6977]', 
+            border: 'border-[#adc0d9]',
             label: 'К выполнению'
         },
         in_progress: {
@@ -15,10 +15,10 @@ export function TaskItem({ task, onStatusChange, onEdit, onDelete, onAddMember, 
             label: 'В работе'
         },
         done: {
-            bg: 'bg-emerald-50',
-            text: 'text-emerald-600',
-            border: 'border-emerald-200',
-            label: 'Готово'
+        bg: 'bg-cyan-50/70',
+        text: 'text-[#18a7b5]',   
+        border: 'border-cyan-200', 
+        label: 'Готово'
         }
     };
 

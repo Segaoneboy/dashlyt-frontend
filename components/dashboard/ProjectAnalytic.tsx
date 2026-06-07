@@ -45,14 +45,14 @@ export function ProjectAnalytic({ tasks = [], project }: { tasks: any[], project
             {
                 label: 'План',
                 data: [estimatedTotal],
-                backgroundColor: '#f4f4f5', 
+                backgroundColor: '#adc0d9', 
                 borderRadius: 8,
                 borderSkipped: false,
             },
             {
                 label: 'Факт',
                 data: [actualTotal],
-                backgroundColor: actualTotal > estimatedTotal ? '#f87171' : '#0d9488', 
+                backgroundColor: actualTotal > estimatedTotal ? '#f87171' : '#18a7b5', 
                 borderRadius: 8,
                 borderSkipped: false,
             }
@@ -64,7 +64,7 @@ export function ProjectAnalytic({ tasks = [], project }: { tasks: any[], project
         labels: ['К выполнению', 'В работе', 'Готово'],
         datasets: [{
             data: [statusCounts.todo, statusCounts.in_progress, statusCounts.done],
-            backgroundColor: ['#cbd5e1', '#fde047', '#2dd4bf'], 
+            backgroundColor: ['#adc0d9', '#fbbf24', '#18a7b5'], 
             borderWidth: 2,
             borderColor: '#ffffff',
         }]
@@ -86,7 +86,7 @@ export function ProjectAnalytic({ tasks = [], project }: { tasks: any[], project
                 
                 {/* Счетчик людей в проекте */}
                 <div className="flex items-center gap-3 bg-zinc-50 px-4 py-2.5 rounded-xl border border-zinc-200 self-start sm:self-center">
-                    <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                    <div className="p-2 bg-[#18a7b5]/10 text-[#18a7b5] rounded-lg">
                         <Users size={18} />
                     </div>
                     <div>
@@ -102,7 +102,7 @@ export function ProjectAnalytic({ tasks = [], project }: { tasks: any[], project
                 <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100">
                     <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-semibold text-zinc-500">Выполнение задач</span>
-                        <CheckCircle2 size={16} className="text-emerald-500" />
+                        <CheckCircle2 size={16} className="text-[#18a7b5]" />
                     </div>
                     <div className="text-2xl font-bold text-zinc-900">{doneTasksPercentage}%</div>
                     <div className="text-[11px] text-zinc-400 mt-1">
